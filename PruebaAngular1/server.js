@@ -10,6 +10,14 @@ app.use(cors());
 // Middleware para parsear el cuerpo de las solicitudes
 app.use(express.json());
 
+app.use(bodyParser.json());
+
+const users = [
+    { username: 'admin', password: 'admin', token: 'token1' },
+    { username: 'usuario2', password: 'contraseña2', token: 'token2' }
+];
+
+
 const getDefaultRegions = () => {
     return [
         { region_id: 0, region: 'Norte', tag: 'N', status: 1 },
@@ -41,6 +49,17 @@ app.post('/region', (req, res) => {
         region: newRegion
     });
 });
+
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    const user = users.find(u => u.username === username && u.password === password);
+    
+    if (user) {
+      res.json({ token: user.token });
+    } else {
+      res.status(401).json({ message: 'Credenciales incorrectas' });
+    }
+  });
 
 // Iniciar el servidor
 app.listen(PORT, () => {

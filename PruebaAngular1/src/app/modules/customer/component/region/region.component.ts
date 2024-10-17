@@ -4,13 +4,14 @@ import { RegionService } from '../../_service/region.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../../../shared/shared-module';
 import { CommonModule } from '@angular/common';
+import { LoginComponent } from '../../../authentication/component/login.component';
 import Swal from 'sweetalert2';
 declare var $: any;
 
 @Component({
   selector: 'app-region',
   standalone: true,
-  imports: [SharedModule, CommonModule],
+  imports: [SharedModule, CommonModule, ReactiveFormsModule],
   templateUrl: './region.component.html',
   styleUrls: ['./region.component.css']
 })
@@ -58,7 +59,7 @@ export class RegionComponent implements OnInit {
     });
   }
 
-    onSubmit() {
+  onSubmit() {
     if (this.form.invalid) {
       Swal.fire('Error', 'Por favor, completa los campos obligatorios.', 'error');
       return;

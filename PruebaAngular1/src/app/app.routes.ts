@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
 import { RegionComponent } from './modules/customer/component/region/region.component';
+import { LoginComponent } from './modules/authentication/component/login.component';
+import { AuthGuard } from './auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/region', pathMatch: 'full' },
-  { path: 'region', component: RegionComponent },
-  { path: '**', redirectTo: '/region' }
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'region', component: RegionComponent, canActivate: [AuthGuard] }
 ];
