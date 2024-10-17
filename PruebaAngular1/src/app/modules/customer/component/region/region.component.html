@@ -4,14 +4,20 @@
             <h2 class="card-title">Regiones</h2>
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col">
-                    <button type="button" class="btn btn-primary btn-new" (click)="showModalForm()">
-                        Agregar región
-                    </button>
+            <!-- Mostrar GIF de carga mientras se obtienen las regiones -->
+            <div *ngIf="loading" class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
                 </div>
-            </div>                
-            <table class="table table-striped">
+            </div>
+
+            <!-- Mensaje cuando no hay regiones registradas -->
+            <div *ngIf="!loading && regions.length === 0" class="text-center table-empty">
+                <h4>No cuentas con regiones registradas</h4>
+            </div>
+
+            <!-- Tabla de regiones -->
+            <table *ngIf="!loading && regions.length > 0" class="table table-striped">
                 <thead>
                     <tr class="table-primary">
                         <th scope="col">Id</th>
@@ -29,43 +35,55 @@
                     </tr>
                 </tbody>
             </table>
+
+            <!-- Botón para agregar región -->
+            <div class="d-flex justify-content-center mb-3">
+                <button type="button" class="btn btn-primary btn-new" (click)="showModalForm()">
+                    Agregar región
+                </button>
+            </div>
         </div>
-        <div class="card-footer">
-            <small>26 de agosto de 2024 - 08:30:05 am</small>
+        <div class="card-footer text-end">
+            <small>{{ current_date | date: 'dd/MMM/yyyy, h:mm a' }}</small>
         </div>
     </div>
 </div>
 
 <!-- Modal para agregar región -->
-<div class="modal fade" tabindex="-1" data-bs-backdrop="static" id="modalForm">
+<div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Registrar nueva región</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFormLabel">Registrar nueva región</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <div class="mb-3">
+                        <label for="region" class="form-label">Región <span class="input-required">*</span></label>
+                        <input type="text" class="form-control" id="region" formControlName="region" placeholder="Nombre de la región" 
+                               [ngClass]="{'is-invalid': form.controls['region'].invalid && form.controls['region'].touched}">
+                        <div *ngIf="form.get('region')?.invalid && form.get('region')?.touched" class="text-danger">
+                            El campo región es obligatorio.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tag" class="form-label">Código <span class="input-required">*</span></label>
+                        <input type="text" class="form-control" id="tag" formControlName="tag" placeholder="Código de la región" 
+                               [ngClass]="{'is-invalid': form.controls['tag'].invalid && form.controls['tag'].touched}">
+                        <div *ngIf="form.get('tag')?.invalid && form.get('tag')?.touched" class="text-danger">
+                            El campo código es obligatorio.
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="loading || form.invalid">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span *ngIf="!loading">Guardar</span>
+                </button>
+            </div>
         </div>
-        <div class="modal-body">
-            <form [formGroup]="form" (ngSubmit)="onSubmit()">
-                <div class="mb-3">
-                    <label for="region" class="form-label">Región <span class="input-required">*</span></label>
-                    <input type="text" class="form-control" formControlName="region" placeholder="Nombre de la región">
-                </div>
-                <div class="mb-3">
-                    <label for="tag" class="form-label">Código <span class="input-required">*</span></label>
-                    <input type="text" class="form-control" formControlName="tag" placeholder="Código de la región">
-                </div>
-                <div class="form-button">
-                    <button type="submit" class="btn btn-primary btn-save">Guardar</button>
-                </div>
-            </form>                                                            
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary">Guardar cambios</button>
-        </div>
-      </div>
     </div>
- </div> 
-
-<!-- Script de Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</div>
