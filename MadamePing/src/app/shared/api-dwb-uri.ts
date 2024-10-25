@@ -1,0 +1,1 @@
+export const api_dwb_uri: string = '[http://localhost:8080](http://localhost:8080)';

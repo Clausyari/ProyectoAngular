@@ -1,0 +1,107 @@
+<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+  <div class="navbar-content container-fluid">
+    <a class="navbar-brand" href="#">Estilo En Casa</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Regiones</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Imágenes</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Loading gif -->
+<div *ngIf="loading" class="text-center">
+  <img src="assets/loading.gif" class="img-loading" alt="Cargando...">
+</div>
+
+<div class="container mt-5">
+  <div class="card border-primary mb-3">
+    <div class="card-header">
+      <h2 class="card-title">Región</h2>
+    </div>
+    <div class="card-body">
+
+      <!-- Mostrar mensaje cuando no hay regiones -->
+      <div *ngIf="!loading && regions.length == 0" class="text-center table-empty">
+        <h4>No cuentas con regiones registradas</h4>
+      </div>
+
+      <!-- Mostrar tabla cuando hay regiones -->
+      <ng-template [ngIf]="!loading && regions.length > 0">
+        <table class="table table-striped">
+          <thead>
+            <tr class="table-primary">
+              <th scope="col">No.</th>
+              <th scope="col">Región</th>
+              <th scope="col">Tag</th>
+              <th scope="col">Estatus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let region of regions; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ region.region }}</td>
+              <td>{{ region.tag }}</td>
+              <td>{{ region.status }}</td>
+            </tr>
+          </tbody>              
+        </table>
+      </ng-template>
+
+      <div class="d-flex justify-content-center mb-3">
+        <div class="row">
+          <div class="col">
+            <button type="button" class="btn btn-primary btn-new" (click)="showModalForm()">Agregar región</button>
+          </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Footer con la fecha actual -->
+    <div class="card-footer text-end">
+      <small>{{ current_date | date: 'dd/MMM/yyyy, h:mm a' }}</small>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Bootstrap -->
+<div class="modal fade" tabindex="-1" data-bs-backdrop="static" id="modalForm">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Registro de Región</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="region" class="form-label">Región <span class="input-required">*</span></label>
+            <input type="text" class="form-control" formControlName="region" placeholder="Nombre de la región" [ngClass]="{'is-invalid': form.controls['region'].errors && submitted}">
+            <small class="input-error-message" *ngIf="form.controls['region'].errors && submitted">Favor de ingresar un nombre de región válido</small>
+          </div>
+          <div class="mb-3">
+            <label for="tag" class="form-label">Tag <span class="input-required">*</span></label>
+            <input type="text" class="form-control" formControlName="tag" placeholder="Código de la región" [ngClass]="{'is-invalid': form.controls['tag'].errors && submitted}">
+            <small class="input-error-message" *ngIf="form.controls['tag'].errors && submitted">Favor de ingresar un código de región válido</small>
+          </div>
+          <div class="form-button">
+            <button type="submit" class="btn btn-primary btn-save">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
