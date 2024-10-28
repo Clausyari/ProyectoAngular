@@ -21,6 +21,7 @@ export class RegionComponent {
   loading = false;
   current_date = new Date();
   swal: SwalMessages = new SwalMessages();
+  region_id = 0;
 
   constructor(
     private regionService: RegionService,
@@ -35,6 +36,7 @@ export class RegionComponent {
   showModalForm() {
     this.submitted = false;
     this.form.reset();
+    this.region_id = 0; // Resetear ID al abrir el modal
     $("#modalForm").modal("show");
   }
 
@@ -59,32 +61,80 @@ export class RegionComponent {
   }
 
   onSubmit() {
-    // Indicar que el formulario fue enviado
     this.submitted = true;
-    
-    // Validar si el formulario es inválido (si los campos están vacíos o no cumplen validaciones)
+
     if (this.form.invalid) return;
 
-    // Si el formulario es válido, proceder a agregar la nueva región
-    let id = this.regions.length + 1; // Asignar un ID basado en el tamaño actual de la lista de regiones
-    let region = new Region(
-        id,
-        this.form.controls['region'].value!, // Obtener el valor del control 'region'
-        this.form.controls['tag'].value!,    // Obtener el valor del control 'tag'
-        0                                   // Status por defecto (suponiendo que es 1)
-    );
+    if (this.region_id === 0) {
+      this.onCreateRegion(this.form.value);
+    } else {
+      this.onUpdateRegion(this.form.value, this.region_id);
+    }
+  }
 
-    // Agregar la nueva región a la lista de regiones
-    this.regions.push(region);
+  onCreateRegion(region: any) {
+    this.regionService.createRegion(region).subscribe({
+      next: (response) => {
+        console.log('Región creada:', response);
+        this.regions.push(response); // Agregar la nueva región a la lista
+        this.swal.successMessage("La región ha sido registrada");
+        this.form.reset();
+        this.hideModalForm();
+        this.getRegions(); // Actualizar la lista
+      },
+      error: (error) => {
+        console.error('Error al crear la región', error);
+        this.swal.errorMessage(error.error.message); // Mostrar error
+      }
+    });
+  }
 
-    // Mostrar un mensaje de éxito usando SweetAlert2
-    this.swal.successMessage("La región ha sido registrada");
+  onUpdateRegion(region: any, id: number) {
+    this.regionService.updateRegion(region, id).subscribe({
+      next: (response) => {
+        console.log('Región actualizada:', response);
+        this.swal.successMessage("La región ha sido actualizada");
+        this.form.reset();
+        this.hideModalForm();
+        this.getRegions(); // Actualizar la lista
+      },
+      error: (error) => {
+        console.error('Error al actualizar la región', error);
+        this.swal.errorMessage(error.error.message); // Mostrar error
+      }
+    });
+  }
 
-    // Resetear la variable `submitted` para permitir el envío de otro formulario
-    this.submitted = false;
+  updateRegion(region: Region) {
+    this.region_id = region.region_id; // Asignar ID de la región a actualizar
+    this.form.controls['region'].setValue(region.region);
+    this.form.controls['tag'].setValue(region.tag);
+    this.showModalForm();
+  }
 
-    // Resetear el formulario y cerrar el modal
-    this.form.reset();  // Limpiar los campos del formulario
-    this.hideModalForm();  // Cerrar el modal
+  enableRegion(id: number) {
+    this.regionService.enableRegion(id).subscribe({
+      next: (v) => {
+        this.swal.successMessage(v.message);
+        this.getRegions(); // Actualizar la lista
+      },
+      error: (e) => {
+        console.error(e);
+        this.swal.errorMessage(e.error.message); // Mostrar error
+      }
+    });
+  }
+
+  disableRegion(id: number) {
+    this.regionService.disableRegion(id).subscribe({
+      next: (v) => {
+        this.swal.successMessage(v.message);
+        this.getRegions(); // Actualizar la lista
+      },
+      error: (e) => {
+        console.error(e);
+        this.swal.errorMessage(e.error.message); // Mostrar error
+      }
+    });
   }
 }

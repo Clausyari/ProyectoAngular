@@ -1,0 +1,8 @@
+.register-container {
+  max-width: 500px; /* Ajusta el ancho máximo del formulario */
+  margin: auto; /* Centra el formulario horizontalmente */
+}
+
+.invalid-feedback {
+  font-size: 0.875rem; /* Ajusta el tamaño del texto del feedback */
+}

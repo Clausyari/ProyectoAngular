@@ -28,7 +28,7 @@
 <div class="container mt-5">
   <div class="card border-primary mb-3">
     <div class="card-header">
-      <h2 class="card-title">Región</h2>
+      <h2 class="card-title">Regiones</h2>
     </div>
     <div class="card-body">
 
@@ -46,6 +46,7 @@
               <th scope="col">Región</th>
               <th scope="col">Tag</th>
               <th scope="col">Estatus</th>
+              <th scope="col">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -54,6 +55,11 @@
               <td>{{ region.region }}</td>
               <td>{{ region.tag }}</td>
               <td>{{ region.status }}</td>
+              <td>
+                <button class="btn btn-warning" (click)="updateRegion(region)">Editar</button>
+                <button class="btn btn-danger" (click)="disableRegion(region.region_id)">Desactivar</button>
+                <button class="btn btn-success" (click)="enableRegion(region.region_id)">Activar</button>
+              </td>
             </tr>
           </tbody>              
         </table>
@@ -65,7 +71,7 @@
             <button type="button" class="btn btn-primary btn-new" (click)="showModalForm()">Agregar región</button>
           </div>
         </div>
-    </div>
+      </div>
     </div>
 
     <!-- Footer con la fecha actual -->
@@ -80,7 +86,7 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Registro de Región</h5>
+        <h5 class="modal-title">{{ region_id === 0 ? 'Registro de Región' : 'Actualizar Región' }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
