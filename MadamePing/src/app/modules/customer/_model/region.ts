@@ -10,4 +10,4 @@ export class Region{
         this.tag = tag;
         this.status = status;
     }
-} 
+}

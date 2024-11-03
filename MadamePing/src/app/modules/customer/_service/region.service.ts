@@ -13,31 +13,33 @@ export class RegionService {
 
   constructor(private http: HttpClient) { }
 
-  getRegions(): Observable<Region[]>{
+  getRegions(): Observable<Region[]> {
     return this.http.get<Region[]>(this.apiUrl + this.source);
   }
 
-  createRegion(region: any): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.post<any>(`${this.apiUrl}/regions`, region, { headers });
+  createRegion(region: Region): Observable<Region> {
+    return this.http.post<Region>(`${this.apiUrl}/regions`, region);
   }
 
-  updateRegion(region: any, id: number): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.put<any>(`${this.apiUrl}/regions/${id}`, region, { headers });
+  updateRegion(regionData: any, regionId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/regions/${regionId}`, regionData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
   }
 
-  disableRegion(id: number): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.delete<any>(`${this.apiUrl}/regions/${id}`, { headers });
+  // Método para desactivar una región
+  disableRegion(regionId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/regions/${regionId}`);
   }
 
-  enableRegion(id: number): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.put<any>(`${this.apiUrl}/regions/${id}/activate`, null, { headers });
-  }
+  // Método para habilitar una región (si es necesario)
+  enableRegion(regionId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/regions/${regionId}/enable`, {}, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }  
 }

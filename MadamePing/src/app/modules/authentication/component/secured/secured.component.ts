@@ -18,5 +18,4 @@ export class SecuredComponent {
     this.router.navigate(['/login']);
     alert(`Cerro sesión correctamente`);
   }
-
 }

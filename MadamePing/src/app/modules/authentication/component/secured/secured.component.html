@@ -1,8 +1,15 @@
-<p>secured works!</p>
-<p> Princesa, pero que buscas?</p>
-<div class="px-xl-3">
-  <button (click)="onLogOut()" class="btn btn-block btn-secondary">
-    <span>Logout</span>
-    <i class="fas fa-sign-in-alt ml-1"></i>
-  </button>
+<div class="container mt-5 text-center">
+  <div class="card shadow-lg p-4">
+    <h1 class="mb-4 text-primary">Área Segura</h1>
+    <p class="lead">¡Bienvenida, princesa! ¿Qué buscas?</p>
+    
+    <div class="d-flex justify-content-center my-4">
+      <button (click)="onLogOut()" class="btn btn-secondary btn-lg d-flex align-items-center shadow-sm">
+        <i class="fas fa-sign-out-alt mr-2"></i>
+        <span>Log out</span>
+      </button>
+    </div>
+
+    <a href="/region" class="btn btn-outline-primary mt-3 shadow-sm">Ver Tabla de Regiones</a>
+  </div>
 </div>

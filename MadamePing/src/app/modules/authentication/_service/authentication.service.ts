@@ -10,7 +10,6 @@ import { LoginResponse } from '../_model/login-response';
   providedIn: 'root'
 })
 export class AuthenticationService {
-
   private token: string | null;
   private loggedInUsername: string | null;
   private jwtHelper = new JwtHelperService();
@@ -21,6 +20,7 @@ export class AuthenticationService {
   }
 
   public login(credenciales: {username?: string, password?: string}): Observable<HttpResponse<LoginResponse>> {
+    console.log("Intentando login con credenciales:", credenciales);
     return this.http.post<LoginResponse>(`${api_dwb_uri}/login`, credenciales, { observe: 'response' });
   }
 
@@ -45,9 +45,8 @@ export class AuthenticationService {
   }
 
   public getUserFromLocalCache(): User | null {
-    
     let usuarioCache = localStorage.getItem('user');
-    if(usuarioCache !== null){
+    if (usuarioCache !== null) {
       return JSON.parse(usuarioCache);
     }
     return null;
@@ -55,25 +54,24 @@ export class AuthenticationService {
 
   public loadToken(): void {
     this.token = localStorage.getItem('token');
+    console.log("Token cargado del localStorage:", this.token);
   }
 
-  public getToken(): string | null{
-    return this.token;
-  }
+  public getToken(): string | null {
+    return localStorage.getItem('token');
+  }  
 
   public isUserLoggedIn(): boolean {
     this.loadToken();
-    if (this.token != null && this.token !== ''){
-      if (this.jwtHelper.decodeToken(this.token).sub != null || '') {
-        if (!this.jwtHelper.isTokenExpired(this.token)) {
-          this.loggedInUsername = this.jwtHelper.decodeToken(this.token).sub;
-          return true;
-        }
+    if (this.token && this.token !== '') {
+      const decodedToken = this.jwtHelper.decodeToken(this.token);
+      console.log('Token decodificado:', decodedToken);
+      if (decodedToken.username && !this.jwtHelper.isTokenExpired(this.token)) {
+        this.loggedInUsername = decodedToken.username;
+        return true;
       }
-    } else {
-      this.logOut();
-      return false;
     }
+    this.logOut();
     return false;
-  }
+  }  
 }

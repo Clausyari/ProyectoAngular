@@ -10,7 +10,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
 
   // Ruta protegida para el componente Region
-  { path: 'region', component: RegionComponent },
+  { path: 'region', component: RegionComponent, canActivate: [authenticationGuard] },
 
   { path: 'register', component: RegisterComponent },
   { path: 'secured', component: SecuredComponent, canActivate: [authenticationGuard] },

@@ -14,8 +14,8 @@ declare var $: any;
   templateUrl: './region.component.html',
   styleUrls: ['./region.component.css']
 })
-export class RegionComponent {
-  regions:Region[] = [];
+export class RegionComponent implements OnInit {
+  regions: Region[] = [];
   form: FormGroup;
   submitted = false;
   loading = false;
@@ -30,13 +30,13 @@ export class RegionComponent {
     this.form = this.formBuilder.group({
       region: ['', Validators.required],
       tag: ['', Validators.required]
-    });    
+    });
   }
 
-  showModalForm() {
-    this.submitted = false;
-    this.form.reset();
-    this.region_id = 0; // Resetear ID al abrir el modal
+  showModalForm(isEdit: boolean = false) {
+    if (!isEdit) {
+      this.resetVariables();
+    }
     $("#modalForm").modal("show");
   }
 
@@ -44,97 +44,116 @@ export class RegionComponent {
     $("#modalForm").modal("hide");
   }
 
-  getRegions(){
+  getRegions() {
+    this.loading = true;
     this.regionService.getRegions().subscribe({
       next: (v) => {
-        console.log(v);
         this.regions = v;
+        this.loading = false;
       },
       error: (e) => {
         console.log(e);
+        this.loading = false;
       }
     });
   }
-  
-  ngOnInit(){
+
+  ngOnInit() {
     this.getRegions();
   }
 
   onSubmit() {
     this.submitted = true;
-
     if (this.form.invalid) return;
 
+    console.log('region_id:', this.region_id);
+    console.log('form data:', this.form.value);
     if (this.region_id === 0) {
-      this.onCreateRegion(this.form.value);
+      this.onSubmitCreate();
     } else {
-      this.onUpdateRegion(this.form.value, this.region_id);
+      this.onSubmitUpdate();
     }
   }
 
-  onCreateRegion(region: any) {
-    this.regionService.createRegion(region).subscribe({
+  onSubmitCreate() {
+    this.regionService.createRegion(this.form.value).subscribe({
       next: (response) => {
         console.log('Región creada:', response);
-        this.regions.push(response); // Agregar la nueva región a la lista
-        this.swal.successMessage("La región ha sido registrada");
-        this.form.reset();
+        this.swal.successMessage("Se creó una nueva región");
+        this.getRegions();
         this.hideModalForm();
-        this.getRegions(); // Actualizar la lista
       },
       error: (error) => {
         console.error('Error al crear la región', error);
-        this.swal.errorMessage(error.error.message); // Mostrar error
+        this.swal.errorMessage(error.error.message || 'Error desconocido');
       }
     });
   }
 
-  onUpdateRegion(region: any, id: number) {
-    this.regionService.updateRegion(region, id).subscribe({
+  onSubmitUpdate() {
+    this.regionService.updateRegion(this.form.value, this.region_id).subscribe({
       next: (response) => {
-        console.log('Región actualizada:', response);
-        this.swal.successMessage("La región ha sido actualizada");
-        this.form.reset();
+        this.swal.successMessage("Región actualizada correctamente");
+        this.getRegions();
         this.hideModalForm();
-        this.getRegions(); // Actualizar la lista
       },
       error: (error) => {
         console.error('Error al actualizar la región', error);
-        this.swal.errorMessage(error.error.message); // Mostrar error
+        this.swal.errorMessage(error.error.message || 'Error desconocido');
       }
     });
-  }
+  }  
 
   updateRegion(region: Region) {
-    this.region_id = region.region_id; // Asignar ID de la región a actualizar
-    this.form.controls['region'].setValue(region.region);
-    this.form.controls['tag'].setValue(region.tag);
-    this.showModalForm();
+    this.region_id = region.region_id; 
+    this.form.patchValue(region);
+    console.log('Actualizando región con ID:', this.region_id, 'y datos:', region);
+    this.showModalForm(true);
   }
 
   enableRegion(id: number) {
-    this.regionService.enableRegion(id).subscribe({
-      next: (v) => {
-        this.swal.successMessage(v.message);
-        this.getRegions(); // Actualizar la lista
-      },
-      error: (e) => {
-        console.error(e);
-        this.swal.errorMessage(e.error.message); // Mostrar error
+    this.swal.confirmMessage.fire({
+      title: "Favor de confirmar la activación",
+      text: "¿Está seguro de que desea activar esta región?",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.regionService.enableRegion(id).subscribe({
+          next: (v) => {
+            this.swal.successMessage(v.message); 
+            this.getRegions();
+          },
+          error: (e) => {
+            console.error(e);
+            this.swal.errorMessage(e.error.message);
+          }
+        });
       }
     });
   }
 
   disableRegion(id: number) {
-    this.regionService.disableRegion(id).subscribe({
-      next: (v) => {
-        this.swal.successMessage(v.message);
-        this.getRegions(); // Actualizar la lista
-      },
-      error: (e) => {
-        console.error(e);
-        this.swal.errorMessage(e.error.message); // Mostrar error
+    this.swal.confirmMessage.fire({
+      title: "Favor de confirmar la desactivación",
+      text: "¿Está seguro de que desea desactivar esta región?",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.regionService.disableRegion(id).subscribe({
+          next: (v) => {
+            this.swal.successMessage(v.message); 
+            this.getRegions(); // Cargar las regiones después de desactivar
+          },
+          error: (e) => {
+            console.error(e);
+            this.swal.errorMessage(e.error.message);
+          }
+        });
       }
     });
+  }  
+
+  resetVariables() {
+    this.form.reset();
+    this.submitted = false;
+    this.region_id = 0;
   }
 }

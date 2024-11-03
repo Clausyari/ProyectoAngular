@@ -19,3 +19,45 @@
 .table-empty{
     padding: 24px;
 }
+/* Estilos del botón de dropdown */
+.dropdown-button {
+  border: none;
+  background-color: transparent;
+}
+
+.dropdown-item {
+  color: black !important;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  color: white !important;
+}
+
+.enable-item {
+  color: blue !important;
+  cursor: pointer;
+}
+
+.enable-item:hover {
+  color: white !important;
+}
+
+.disable-item {
+  color: red !important;
+  cursor: pointer;
+}
+
+.disable-item:hover {
+  color: white !important;
+}
+
+.icon-text-ul {
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+/* Estilo para el estado inactivo */
+.td-status-disable {
+  color: red;
+}

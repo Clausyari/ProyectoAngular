@@ -33,21 +33,21 @@ export class LoginComponent {
   ngOnInit(): void {}
 
   public onLogin(): void {
-    this.submitted = true; // Asegúrate de que se marquen los campos como tocados
-
+    this.submitted = true;
+  
     if (this.loginForm.invalid) {
-      return; // Evita continuar si hay errores
+      return;
     }
-
+  
     this.showLoading = true;
     const loginFormValue = this.loginForm.value as { username: string, password: string };
-
+  
     this.authenticationService.login(loginFormValue).subscribe(
       (response: HttpResponse<LoginResponse>) => {
         if (response.body && response.body.token) {
           const token = response.body.token;
           this.authenticationService.saveToken(token); // Guarda el token usando el servicio
-          this.authenticationService.addUserToLocalCache(response.body); // Almacena la respuesta del usuario en cache
+          this.authenticationService.addUserToLocalCache(response.body); // Almacena la respuesta del usuario en caché
           this.router.navigateByUrl('/secured'); // Redirige a la página asegurada
         } else {
           console.error('El token devuelto no fue poblado o la respuesta está vacía');
@@ -65,5 +65,5 @@ export class LoginComponent {
         this.showLoading = false;
       }
     );
-  } 
+  }  
 }
